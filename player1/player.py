@@ -2,6 +2,7 @@ import random
 import Pyro4
 import wx
 import os,sys
+import json
 import wx.lib.buttons as buttons
  
 ########################################################################
@@ -22,13 +23,15 @@ class TTTPanel(wx.Panel):
         self.player = 'X'
         self.font = ''
         self.server = ''
- 
+        self.title = ''
+        
         self.layoutWidgets()
         self.pyro_client()
+        
+        
 
     #----------------------------------------------------------------------
 
-    
     def pyro_client(self):
         uri = "PYRONAME:maile@localhost:7777"
         self.server = Pyro4.Proxy(uri)
@@ -78,7 +81,9 @@ class TTTPanel(wx.Panel):
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
         font = wx.Font(22, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
                        wx.FONTWEIGHT_BOLD)
- 
+
+
+
         size = (100,100)
         self.button1 = buttons.GenToggleButton(self, size=size, name="btn1")
         self.button2 = buttons.GenToggleButton(self, size=size, name="btn2")
@@ -104,14 +109,15 @@ class TTTPanel(wx.Panel):
         self.fgSizer.AddMany(self.widgets)
         mainSizer.Add(self.fgSizer, 0, wx.ALL|wx.CENTER, 5)
  
-        # self.endTurnBtn = wx.Button(self, label="End Turn")
-        # self.endTurnBtn.Bind(wx.EVT_BUTTON, self.onEndTurn)
-        # btnSizer.Add(self.endTurnBtn, 0, wx.ALL|wx.CENTER, 5)
+        self.endTurnBtn = wx.Button(self, label="DEBUG")
+        self.endTurnBtn.Bind(wx.EVT_BUTTON, self.printFlag)
+        btnSizer.Add(self.endTurnBtn, 0, wx.ALL|wx.CENTER, 5)
          
         startOverBtn = wx.Button(self, label="Restart")
         startOverBtn.Bind(wx.EVT_BUTTON, self.onRestart)
         btnSizer.Add(startOverBtn, 0, wx.ALL|wx.CENTER, 5)
         mainSizer.Add(btnSizer, 0, wx.CENTER)
+
  
         self.methodsToWin = [(self.button1, self.button2, self.button3),
                              (self.button4, self.button5, self.button6),
@@ -164,8 +170,11 @@ class TTTPanel(wx.Panel):
         self.Layout()
  
     #----------------------------------------------------------------------
-    def onEndTurn(self, event):
-        self.switch()
+    # def onEndTurn(self, event):
+    #     self.switch()
+    #----------------------------------------------------------------------
+    def printFlag(self, event):
+        self.printFlagArr()        
     #----------------------------------------------------------------------
     def giveUp(self):
         """
@@ -187,7 +196,9 @@ class TTTPanel(wx.Panel):
         """
         Calls the restart method
         """
-        self.testSetBtn()
+        self.server.resetFlag()
+        self.restart()
+        # self.updateView()
  
     #----------------------------------------------------------------------
     def onToggleX(self, event):
@@ -199,7 +210,7 @@ class TTTPanel(wx.Panel):
         button.SetLabel("X")
         button_id = button.GetId()
 
-        print self.server.setBtn(str(button_id))
+        self.server.setBtn(button_id,"X")
  
         self.checkWin()
         if not self.xToggled:
@@ -239,7 +250,7 @@ class TTTPanel(wx.Panel):
         button.SetLabel("O")
         button_id = button.GetId()
 
-        print self.server.setBtn(str(button_id))
+        self.server.setBtn(button_id,"O")
  
         self.checkWin()
         if not self.oToggled:
@@ -281,19 +292,33 @@ class TTTPanel(wx.Panel):
         # self.endTurnBtn.Disable()
         self.enableUnusedButtons()        
     #---------------------------------------------------------------------
-    def testSetBtn(self):
-        """
-        Restart the game and reset everything
-        """
-        button_id = self.server.getBtn()
-        
-        print button_id
+    def updateView(self):
+        button_id = self.server.getBtn()        
+        # print button_id
+        decoded = json.loads(button_id)
+        for x in decoded:
+            print "btn id = "+str(x[0])+" value = "+x[1]
+            for button in self.widgets:
+                if(x[0] == button.GetId()):
+                    button.SetLabel(x[1])
+                    button.SetValue(True)
+                    button.Disable()
 
-        for button in self.widgets:
-            if(button_id == button.GetId()):
-                button.SetLabel("W")
-                button.SetValue(True)
-                button.Disable()
+        self.checkWin()
+    #------------------------------------------------------------------------
+    def printFlagArr(self):
+        button_id = self.server.getBtn()        
+        # print button_id
+        decoded = json.loads(button_id)
+        for x in decoded:
+            print "btn id = "+str(x[0])+" value = "+x[1]
+            for button in self.widgets:
+                if(x[0] == button.GetId()):
+                    button.SetLabel(x[1])
+                    button.SetValue(True)
+                    button.Disable()
+
+        self.checkWin()
 
         
         
