@@ -20,15 +20,25 @@ class TTTPanel(wx.Panel):
         self.oToggled = False
         self.xToggled = False
         self.playerWon = False
-        self.player = 'X'
+        self.player = ''
         self.font = ''
         self.server = ''
         self.title = ''
-        
+        self.playerId = 2
         self.layoutWidgets()
         self.pyro_client()
+    
+
+    #----------------------------------------------------------------------
+
+    def setInitial(self):
+        self.player = self.server.checkIndex(self.playerId)
+        print "set to " + self.server.checkIndex(self.playerId)
+
         
-        
+
+    #----------------------------------------------------------------------
+                
 
     #----------------------------------------------------------------------
 
@@ -36,6 +46,11 @@ class TTTPanel(wx.Panel):
         uri = "PYRONAME:maile@localhost:7777"
         self.server = Pyro4.Proxy(uri)
 
+        self.server.add_players(2)
+        self.setInitial()
+
+
+    #----------------------------------------------------------------------
 
     def writeLog(self,data):
         fd = open("log.txt","w+")
@@ -76,12 +91,12 @@ class TTTPanel(wx.Panel):
         Create and layout the widgets
         """
         print "sini"
+
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         self.fgSizer = wx.FlexGridSizer(rows=3, cols=3, vgap=5, hgap=5)
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
         font = wx.Font(22, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
                        wx.FONTWEIGHT_BOLD)
-
 
 
         size = (100,100)
@@ -102,8 +117,12 @@ class TTTPanel(wx.Panel):
  
         # change all the main game buttons' font and bind them to an event
         for button in self.widgets:
-            button.SetFont(font)
-            button.Bind(wx.EVT_BUTTON, self.onToggleX)
+            if(self.player == '0'):
+                button.SetFont(font)
+                button.Bind(wx.EVT_BUTTON, onToggleO)
+            elif(self.player == 'X'):
+                button.SetFont(font)
+                button.Bind(wx.EVT_BUTTON, onToggleX)
  
         # add the widgets to the sizers
         self.fgSizer.AddMany(self.widgets)
