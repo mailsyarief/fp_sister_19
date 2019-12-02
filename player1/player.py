@@ -20,15 +20,25 @@ class TTTPanel(wx.Panel):
         self.oToggled = False
         self.xToggled = False
         self.playerWon = False
-        self.player = 'X'
+        self.player = ''
         self.font = ''
         self.server = ''
         self.title = ''
-        
+        self.playerId = 1
         self.layoutWidgets()
         self.pyro_client()
+    
+
+    #----------------------------------------------------------------------
+
+    def setInitial(self):
+        self.player = self.server.checkIndex(self.playerId)
+        print "set to " + self.server.checkIndex(self.playerId)
+
         
-        
+
+    #----------------------------------------------------------------------
+                
 
     #----------------------------------------------------------------------
 
@@ -36,6 +46,11 @@ class TTTPanel(wx.Panel):
         uri = "PYRONAME:maile@localhost:7777"
         self.server = Pyro4.Proxy(uri)
 
+        self.server.add_players(1)
+        self.setInitial()
+
+
+    #----------------------------------------------------------------------
 
     def writeLog(self,data):
         fd = open("log.txt","w+")
@@ -76,12 +91,12 @@ class TTTPanel(wx.Panel):
         Create and layout the widgets
         """
         print "sini"
+
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         self.fgSizer = wx.FlexGridSizer(rows=3, cols=3, vgap=5, hgap=5)
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
         font = wx.Font(22, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
                        wx.FONTWEIGHT_BOLD)
-
 
 
         size = (100,100)

@@ -70,7 +70,17 @@ class Backend(object):
         
         return json.dumps(statusBtn, ensure_ascii=False)
 
-        
+    def checkIndex(self,userid):
+        index = self.players.index(userid)
+        print index
+        print userid
+        if(index == 0):
+            return 'X'
+        elif(index == 1):
+            return 'O'
+        else: 
+            return ''
+
     def add_players(self,player_id):
         self.players.append(player_id)
 
