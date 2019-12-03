@@ -4,6 +4,7 @@ import wx
 import os,sys
 import json
 import wx.lib.buttons as buttons
+import time
  
 ########################################################################
 class TTTPanel(wx.Panel):
@@ -12,6 +13,12 @@ class TTTPanel(wx.Panel):
     """
  
     #----------------------------------------------------------------------
+    id = None
+    interval = 0
+    server = None
+    connected = True
+    connected = True
+    connected_device = []
     def __init__(self, parent):
         """
         Initialize the panel
@@ -319,6 +326,16 @@ class TTTPanel(wx.Panel):
                     button.Disable()
 
         self.checkWin()
+    def ping_server():
+    global connected
+    while True and connected:
+        alive = communicate()
+        if not alive:
+            alive = communicate()
+            if not alive:
+                print("\nSERVER DOWN ( DETECT BY PING ACK )")
+                break
+        time.sleep(interval)
 
         
         
