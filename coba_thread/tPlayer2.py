@@ -94,15 +94,15 @@ class MyForm(wx.Frame):
                        wx.FONTWEIGHT_BOLD)
 
         size = (100, 100)
-        self.button1 = buttons.GenToggleButton(self, size=size, name="btn1")
-        self.button2 = buttons.GenToggleButton(self, size=size, name="btn2")
-        self.button3 = buttons.GenToggleButton(self, size=size, name="btn3")
-        self.button4 = buttons.GenToggleButton(self, size=size, name="btn4")
-        self.button5 = buttons.GenToggleButton(self, size=size, name="btn5")
-        self.button6 = buttons.GenToggleButton(self, size=size, name="btn6")
-        self.button7 = buttons.GenToggleButton(self, size=size, name="btn7")
-        self.button8 = buttons.GenToggleButton(self, size=size, name="btn8")
-        self.button9 = buttons.GenToggleButton(self, size=size, name="btn9")
+        self.button1 = buttons.GenToggleButton(self,id=1, size=size, name="btn1")
+        self.button2 = buttons.GenToggleButton(self,id=2, size=size, name="btn2")
+        self.button3 = buttons.GenToggleButton(self,id=3, size=size, name="btn3")
+        self.button4 = buttons.GenToggleButton(self,id=4, size=size, name="btn4")
+        self.button5 = buttons.GenToggleButton(self,id=5, size=size, name="btn5")
+        self.button6 = buttons.GenToggleButton(self,id=6, size=size, name="btn6")
+        self.button7 = buttons.GenToggleButton(self,id=7, size=size, name="btn7")
+        self.button8 = buttons.GenToggleButton(self,id=8, size=size, name="btn8")
+        self.button9 = buttons.GenToggleButton(self,id=9, size=size, name="btn9")
         self.normalBtnColour = self.button1.GetBackgroundColour()
 
 
@@ -296,11 +296,15 @@ class MyForm(wx.Frame):
             print "btn id = " + str(x[0]) + " value = " + x[1]
             for button in self.widgets:
                 if (x[0] == button.GetId()):
-                    button.SetLabel(x[1])
+                    if (x[1] != ''):
+                        button.SetLabel(x[1])
                     button.SetValue(True)
                     button.Disable()
 
-        self.checkWin()
+        self.Refresh()
+        self.Layout()
+
+
 
 
     def updateDisplay(self, msg):
