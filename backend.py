@@ -4,6 +4,15 @@ import Pyro4
 
 @Pyro4.behavior(instance_mode='single')
 class Backend(object):
+    # btn1 = 31998
+    # btn2 = 31997
+    # btn3 = 31996
+    # btn4 = 31995
+    # btn5 = 31994
+    # btn6 = 31993
+    # btn7 = 31992
+    # btn8 = 31991
+    # btn9 = 31990
 
     def __init__(self):
         self.btn1 = ''
@@ -17,10 +26,20 @@ class Backend(object):
         self.btn9 = ''
         # self.spectator = []
         self.players = []
+        self.turn = 999
+        self.lastTurn = 999
         pass
 
-    def show(self):
-        return "ok"
+    def getTurn(self):
+        return self.turn
+
+    def resetTurn(self):
+        self.lastTurn = self.turn
+        self.turn = 999
+
+    def setTurn(self,val):
+        if(val != self.lastTurn):
+            self.turn = val
 
     def resetFlag(self):
         self.btn1 = ''
@@ -36,50 +55,50 @@ class Backend(object):
     def setBtn(self,id,value):
         print str(id)+" "+str(value)
         btnId = id
-        if(btnId == -2008):
+        if(btnId == 1):
             self.btn1 = value
-        elif(btnId == -2009):
+        elif(btnId == 2):
             self.btn2 = value
-        elif(btnId == -2010):
+        elif(btnId == 3):
             self.btn3 = value
-        elif(btnId == -2011):
+        elif(btnId == 4):
             self.btn4 = value
-        elif(btnId == -2012):
+        elif(btnId == 5):
             self.btn5 = value
-        elif(btnId == -2013):
+        elif(btnId == 6):
             self.btn6 = value
-        elif(btnId == -2014):                                                            
+        elif(btnId == 7):
             self.btn7 = value
-        elif(btnId == -2015):            
+        elif(btnId == 8):
             self.btn8 = value
-        elif(btnId == -2016):            
+        elif(btnId == 9):
             self.btn9 = value
 
     def getBtn(self):
         statusBtn = [
-            [-2008,self.btn1],
-            [-2009,self.btn2],
-            [-2010,self.btn3],
-            [-2011,self.btn4],
-            [-2012,self.btn5],
-            [-2013,self.btn6],
-            [-2014,self.btn7],
-            [-2015,self.btn8],
-            [-2016,self.btn9],
+            [1,self.btn1],
+            [2,self.btn2],
+            [3,self.btn3],
+            [4,self.btn4],
+            [5,self.btn5],
+            [6,self.btn6],
+            [7,self.btn7],
+            [8,self.btn8],
+            [9,self.btn9],
         ]
         
         return json.dumps(statusBtn, ensure_ascii=False)
 
     def checkIndex(self,userid):
         index = self.players.index(userid)
-        print index
-        print userid
+        self.setTurn(self.players[0])
+        print "TURN : " + str(self.turn)
         if(index == 0):
+            print str(index) + "->" + str(userid)
             return 'X'
-        elif(index == 1):
+        if(index == 1):
+            print str(index) + "->" + str(userid)
             return 'O'
-        else: 
-            return ''
 
     def add_players(self,player_id):
         self.players.append(player_id)
