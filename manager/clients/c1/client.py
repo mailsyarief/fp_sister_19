@@ -7,14 +7,17 @@ from threading import Thread
 
 EVT_RESULT_ID = wx.NewId()
 
+
 def EVT_RESULT(win, func):
     win.Connect(-1, -1, EVT_RESULT_ID, func)
+
 
 class ResultEvent(wx.PyEvent):
     def __init__(self, data):
         wx.PyEvent.__init__(self)
         self.SetEventType(EVT_RESULT_ID)
         self.data = data
+
 
 ########################################################################
 
@@ -34,6 +37,7 @@ class TestThread(Thread):
             time.sleep(0.5)
             wx.PostEvent(self.wxObject, ResultEvent(jsonData))
 
+
 ########################################################################
 
 class MyForm(wx.Frame):
@@ -49,6 +53,7 @@ class MyForm(wx.Frame):
         self.username = 'P1'
         self.pyro_client()
         self.isFinish = False
+        self.isSpectator = False
         self.tretTret = TestThread(self)
 
         textSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -59,15 +64,15 @@ class MyForm(wx.Frame):
                        wx.FONTWEIGHT_BOLD)
 
         size = (100, 100)
-        self.button1 = buttons.GenToggleButton(self,id=0, size=size, name="btn1")
-        self.button2 = buttons.GenToggleButton(self,id=1, size=size, name="btn2")
-        self.button3 = buttons.GenToggleButton(self,id=2, size=size, name="btn3")
-        self.button4 = buttons.GenToggleButton(self,id=3, size=size, name="btn4")
-        self.button5 = buttons.GenToggleButton(self,id=4, size=size, name="btn5")
-        self.button6 = buttons.GenToggleButton(self,id=5, size=size, name="btn6")
-        self.button7 = buttons.GenToggleButton(self,id=6, size=size, name="btn7")
-        self.button8 = buttons.GenToggleButton(self,id=7, size=size, name="btn8")
-        self.button9 = buttons.GenToggleButton(self,id=8, size=size, name="btn9")
+        self.button1 = buttons.GenToggleButton(self, id=0, size=size, name="btn1")
+        self.button2 = buttons.GenToggleButton(self, id=1, size=size, name="btn2")
+        self.button3 = buttons.GenToggleButton(self, id=2, size=size, name="btn3")
+        self.button4 = buttons.GenToggleButton(self, id=3, size=size, name="btn4")
+        self.button5 = buttons.GenToggleButton(self, id=4, size=size, name="btn5")
+        self.button6 = buttons.GenToggleButton(self, id=5, size=size, name="btn6")
+        self.button7 = buttons.GenToggleButton(self, id=6, size=size, name="btn7")
+        self.button8 = buttons.GenToggleButton(self, id=7, size=size, name="btn8")
+        self.button9 = buttons.GenToggleButton(self, id=8, size=size, name="btn9")
         self.normalBtnColour = self.button1.GetBackgroundColour()
 
         self.widgets = [self.button1, self.button2, self.button3,
@@ -81,7 +86,7 @@ class MyForm(wx.Frame):
         self.fgSizer.AddMany(self.widgets)
         mainSizer.Add(self.fgSizer, 0, wx.ALL | wx.CENTER, 5)
 
-        self.titleText = wx.StaticText(self,label='')
+        self.titleText = wx.StaticText(self, label='')
         textSizer.Add(self.titleText, 0, wx.CENTER)
 
         self.endTurnBtn = wx.Button(self, label="DEBUG")
@@ -108,7 +113,6 @@ class MyForm(wx.Frame):
         self.SetSizer(mainSizer)
 
         EVT_RESULT(self, self.getThreadData)
-
 
     def onToggle(self, event):
         self.checkWin()
@@ -149,11 +153,17 @@ class MyForm(wx.Frame):
     def setInitial(self):
         TestThread(self)
         self.player = self.server.checkXO(self.username)
-        print "MY INITIAL IS "+self.player
+        print "MY INITIAL IS " + self.player
         if(self.player == 'X'):
             self.Toggled = False
-        else:
+        elif(self.player == 'O'):
             self.titleText.SetLabel("WAIT FOR OTHER PLAYER")
+            self.Toggled = True
+            for btn in self.widgets:
+                btn.Disable()
+        else:
+            self.titleText.SetLabel("WELCOME SPECTATOR!")
+            self.isSpectator = True
             self.Toggled = True
             for btn in self.widgets:
                 btn.Disable()
@@ -167,7 +177,7 @@ class MyForm(wx.Frame):
         self.Layout()
 
     def checkWin(self, computer=False):
-        if(self.isFinish == False):
+        if (self.isFinish == False):
             for button1, button2, button3 in self.methodsToWin:
                 if button1.GetLabel() == button2.GetLabel() and \
                         button2.GetLabel() == button3.GetLabel() and \
@@ -197,7 +207,7 @@ class MyForm(wx.Frame):
         for index, value in enumerate(data, start=0):
             for button in self.widgets:
                 if (index == button.GetId()):
-                    if(value != ''):
+                    if (value != ''):
                         button.SetLabel(value)
                     button.SetValue(True)
 
@@ -210,14 +220,19 @@ class MyForm(wx.Frame):
         print data['turn']
         self.checkYourTurn(data['turn'])
 
-    def checkYourTurn(self,data):
-        if(self.username == data):
-            print "THIS IS YOUR TURN"
-            self.titleText.SetLabel("THIS IS YOUR TURN")
-            self.Toggled = False
-            self.enableUnusedButtons()
+    def checkYourTurn(self, data):
+        if(self.isSpectator == False):
+            if (self.username == data):
+                print "THIS IS YOUR TURN"
+                self.titleText.SetLabel("THIS IS YOUR TURN")
+                self.Toggled = False
+                self.enableUnusedButtons()
+            else:
+                self.titleText.SetLabel("WAIT FOR OTHER PLAYER")
+                self.updateView()
+                self.disableAllBtn()
         else:
-            self.titleText.SetLabel("WAIT FOR OTHER PLAYER")
+            self.titleText.SetLabel("WELCOME SPECTATOR!")
             self.updateView()
             self.disableAllBtn()
 

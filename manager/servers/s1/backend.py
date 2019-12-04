@@ -45,13 +45,16 @@ class Backend(object):
     #---------------------------------
 
     def checkXO(self, username):
-        index = self.json['players'].index(username)
-        self.setTurn(self.json['players'][0])
-        self.syncJson()
-        if(index == 0):
-            return 'X'
-        if(index == 1):
-            return 'O'
+        try:
+            index = self.json['players'].index(username)
+            self.setTurn(self.json['players'][0])
+            self.syncJson()
+            if (index == 0):
+                return 'X'
+            if (index == 1):
+                return 'O'
+        except:
+            return '-'
 
     def setTurn(self,username):
         print self.json['lastTurn']

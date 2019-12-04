@@ -53,6 +53,7 @@ class MyForm(wx.Frame):
         self.username = 'P2'
         self.pyro_client()
         self.isFinish = False
+        self.isSpectator = False
         self.tretTret = TestThread(self)
 
         textSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -153,13 +154,20 @@ class MyForm(wx.Frame):
         TestThread(self)
         self.player = self.server.checkXO(self.username)
         print "MY INITIAL IS " + self.player
-        if (self.player == 'X'):
+        if(self.player == 'X'):
             self.Toggled = False
-        else:
+        elif(self.player == 'O'):
             self.titleText.SetLabel("WAIT FOR OTHER PLAYER")
             self.Toggled = True
             for btn in self.widgets:
                 btn.Disable()
+        else:
+            self.titleText.SetLabel("WELCOME SPECTATOR!")
+            self.isSpectator = True
+            self.Toggled = True
+            for btn in self.widgets:
+                btn.Disable()
+
 
     def enableUnusedButtons(self):
         for button in self.widgets:
@@ -213,13 +221,18 @@ class MyForm(wx.Frame):
         self.checkYourTurn(data['turn'])
 
     def checkYourTurn(self, data):
-        if (self.username == data):
-            print "THIS IS YOUR TURN"
-            self.titleText.SetLabel("THIS IS YOUR TURN")
-            self.Toggled = False
-            self.enableUnusedButtons()
+        if(self.isSpectator == False):
+            if (self.username == data):
+                print "THIS IS YOUR TURN"
+                self.titleText.SetLabel("THIS IS YOUR TURN")
+                self.Toggled = False
+                self.enableUnusedButtons()
+            else:
+                self.titleText.SetLabel("WAIT FOR OTHER PLAYER")
+                self.updateView()
+                self.disableAllBtn()
         else:
-            self.titleText.SetLabel("WAIT FOR OTHER PLAYER")
+            self.titleText.SetLabel("WELCOME SPECTATOR!")
             self.updateView()
             self.disableAllBtn()
 
