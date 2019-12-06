@@ -3,7 +3,7 @@ import Pyro4
 
 
 if __name__ == '__main__':
-    nameserver = ['server1','server2']
+    nameserver = ['server2']
     for x in nameserver:
         uri = "PYRONAME:{}@localhost:7777".format(x)
         server = Pyro4.Proxy(uri)
