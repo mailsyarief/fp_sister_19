@@ -89,12 +89,13 @@ class MyForm(wx.Frame):
         self.titleText = wx.StaticText(self, label='')
         textSizer.Add(self.titleText, 0, wx.CENTER)
 
-        self.endTurnBtn = wx.Button(self, label="DEBUG")
+        # self.endTurnBtn = wx.Button(self, label="DEBUG")
         # self.endTurnBtn.Bind(wx.EVT_BUTTON, self.printFlag)
-        btnSizer.Add(self.endTurnBtn, 0, wx.ALL | wx.CENTER, 5)
+        # btnSizer.Add(self.endTurnBtn, 0, wx.ALL | wx.CENTER, 5)
 
-        startOverBtn = wx.Button(self, label="Restart")
-        # startOverBtn.Bind(wx.EVT_BUTTON, self.onRestart)
+        startOverBtn = wx.Button(self, label="Exit")
+        startOverBtn.Bind(wx.EVT_BUTTON, self.onExit)
+
         btnSizer.Add(startOverBtn, 0, wx.ALL | wx.CENTER, 5)
         mainSizer.Add(textSizer, 0, wx.CENTER)
         mainSizer.Add(btnSizer, 0, wx.CENTER)
@@ -114,6 +115,13 @@ class MyForm(wx.Frame):
 
         EVT_RESULT(self, self.getThreadData)
 
+    def doExit(self):
+        self.server.replacePlayer(self.username)
+        self.Close()
+
+    def onExit(self,event):
+        self.doExit()
+
     def onToggle(self, event):
         self.checkWin()
         if not self.Toggled:
@@ -125,7 +133,7 @@ class MyForm(wx.Frame):
 
             self.Toggled = True
             print "if not"
-            self.endTurnBtn.Enable()
+
             for btn in self.widgets:
                 if button_id != btn.GetId():
                     btn.Disable()
@@ -139,10 +147,10 @@ class MyForm(wx.Frame):
             if False not in labels:
                 msg = "Draw..."
                 dlg = wx.MessageDialog(None, msg, "Game Over!",
-                                       wx.YES_NO | wx.ICON_WARNING)
+                                       wx.OK | wx.ICON_WARNING)
                 result = dlg.ShowModal()
-                if result == wx.ID_YES:
-                    self.restart()
+                if result == wx.ID_OK:
+                    self.onExit
                 dlg.Destroy()
 
     def pyro_client(self):
@@ -176,6 +184,8 @@ class MyForm(wx.Frame):
         self.Refresh()
         self.Layout()
 
+
+
     def checkWin(self, computer=False):
         if (self.isFinish == False):
             for button1, button2, button3 in self.methodsToWin:
@@ -191,12 +201,12 @@ class MyForm(wx.Frame):
                     self.Layout()
 
                     if not computer:
-                        msg = "Selamat Player " + button1.GetLabel() + " menang! main lagi?"
+                        msg = "Selamat Player " + button1.GetLabel()
                         dlg = wx.MessageDialog(None, msg, "Winner!",
-                                               wx.YES_NO | wx.ICON_WARNING)
+                                               wx.OK | wx.ICON_WARNING)
                         result = dlg.ShowModal()
-                        if result == wx.ID_YES:
-                            wx.CallAfter(self.restart)
+                        if result == wx.ID_OK:
+                            self.onExit
                         dlg.Destroy()
                         break
                     else:
@@ -221,6 +231,8 @@ class MyForm(wx.Frame):
         self.checkYourTurn(data['turn'])
 
     def checkYourTurn(self, data):
+        if(self.username == data):
+            self.isSpectator == False
         if(self.isSpectator == False):
             if (self.username == data):
                 print "THIS IS YOUR TURN"

@@ -17,6 +17,22 @@ class Backend(object):
         manager.setServerJSON(self.json)
         manager.broadcast()
 
+
+    def replacePlayer(self,username):
+        if(len(self.json['spectators'])  >= 0 ):
+            if username in self.json['players']:                    
+                index = self.json['players'].index(username)
+                self.json['players'][index] = self.json['spectators'][0]
+                self.json['spectators'].pop(0)
+                if(self.json['turn'] == username):
+                    self.json['turn'] = self.json['players'][index]
+            elif username in self.jsonp['spectators']:
+                self.json['spectators'].remove(username)
+        else:
+            self.json['players'].remove(username)
+        self.syncJson()
+
+
     def syncJson(self):
         self.writeLocalJson()
         self.readLocalJson()
@@ -37,14 +53,16 @@ class Backend(object):
     def addPlayer(self, username):
         self.readLocalJson()
         if(len(self.json['players']) < 2):
-            self.json['players'].append(username)
+            if username not in self.json['players']:
+                self.json['players'].append(username)
         else:
             self.addSpectator(username)
         self.syncJson()
 
     def addSpectator(self, username):
-        self.json['spectators'].append(username)
-        self.syncJson()
+        if username not in self.json['spectators']:
+            self.json['spectators'].append(username)
+            self.syncJson()
 
     def resetLocalJson(self):
         with open('plain.log.json') as f:
@@ -76,6 +94,7 @@ class Backend(object):
         return self.turn
 
     def resetTurn(self):
+        print "RESET"
         if(self.json['turn'] == self.json['players'][1]):
             self.json['turn'] = self.json['players'][0]
         elif(self.json['turn'] == self.json['players'][0]):
