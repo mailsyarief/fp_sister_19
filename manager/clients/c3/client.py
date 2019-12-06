@@ -25,7 +25,7 @@ class TestThread(Thread):
     def __init__(self, wxObject):
         Thread.__init__(self)
         self.wxObject = wxObject
-        uri = "PYRONAME:server1@localhost:7777"
+        uri = "PYRONAME:server3@localhost:7777"
         self.server = Pyro4.Proxy(uri)
         self.alive = True
         self.start()
@@ -146,7 +146,7 @@ class MyForm(wx.Frame):
                 dlg.Destroy()
 
     def pyro_client(self):
-        uri = "PYRONAME:server1@localhost:7777"
+        uri = "PYRONAME:server3@localhost:7777"
         self.server = Pyro4.Proxy(uri)
         self.server.addPlayer(self.username)
 

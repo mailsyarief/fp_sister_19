@@ -8,10 +8,11 @@ class Backend(object):
         self.json = ''
         self.resetLocalJson()
         self.readLocalJson()
+        self.mymanageraddress = "localhost"
         pass
 
     def doBroadcast(self):
-        uri = "PYRONAME:manager2@localhost:7777"
+        uri = "PYRONAME:manager1@{}:7778".format(self.mymanageraddress)
         manager = Pyro4.Proxy(uri)
         manager.setServerJSON(self.json)
         manager.broadcast()
