@@ -3,16 +3,19 @@ import json
 
 class Backend():
     def __init__(self):
-        self.json = 'AAAA'
+        self.readLocalJson()
+        self.json = ''
         self.server = ''
         self.managers = ["manager1"]
+        print self.json
         pass
 
     def broadcast(self):
         for x in self.managers:
             uri = "PYRONAME:{}@10.151.30.141:7778" .format(x)
             self.server = Pyro4.Proxy(uri)
-            self.setServerJSON(self.json)
+            self.readLocalJson()
+            self.server.setServerJSON(self.json)
             self.server.writeLocalJson()
             self.server.askServerToSync()
             self.server.cobaPrint()
@@ -20,6 +23,11 @@ class Backend():
 
     def cobaPrint(self):
         print "WKWKWKWKWKWKKW"
+
+    def readLocalJson(self):
+        with open('log.json') as f:
+            data = json.load(f)
+            self.json = data
 
     def askServerToSync(self):
         servername = "server2"
