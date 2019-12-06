@@ -1,1 +1,1 @@
-{"lastUpdate": 0, "spectators": ["P3"], "turn": "P2", "players": ["P1", "P2"], "flag": ["X", "", "", "", "X", "O", "", "O", "X"], "lastTurn": ""}
+{"lastUpdate": 0, "spectators": [], "turn": "P1", "players": ["P1", "P2"], "flag": ["X", "", "O", "", "O", "X", "O", "", "X"], "lastTurn": ""}

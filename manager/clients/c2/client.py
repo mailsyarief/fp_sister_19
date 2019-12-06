@@ -146,7 +146,7 @@ class MyForm(wx.Frame):
                 dlg.Destroy()
 
     def pyro_client(self):
-        uri = "PYRONAME:server1@localhost:7777"
+        uri = "PYRONAME:server2@localhost:7777"
         self.server = Pyro4.Proxy(uri)
         self.server.addPlayer(self.username)
 
