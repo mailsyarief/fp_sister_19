@@ -12,7 +12,7 @@ class Backend():
 
     def broadcast(self):
         for x in self.managers:
-            uri = "PYRONAME:{}@{}" .format(x[0],x[1])
+            uri = "PYRONAME:{}@{}:7778" .format(x[0],x[1])
             self.server = Pyro4.Proxy(uri)
             self.readLocalJson()
             self.server.setServerJSON(self.json)
@@ -32,7 +32,7 @@ class Backend():
     def askServerToSync(self):
         uri = "PYRONAME:server3@localhost:7777"
         self.server = Pyro4.Proxy(uri)
-        self.setServerJSON(unicode(self.json,'utf-8'))
+        self.setServerJSON(self.json)
         self.server.readLocalJson()
         print "ask to sync done"
 
