@@ -11,7 +11,7 @@ class Backend(object):
         pass
 
     def doBroadcast(self):
-        uri = "PYRONAME:manager2@localhost:7777"
+        uri = "PYRONAME:manager1@10.151.30.141:7778"
         manager = Pyro4.Proxy(uri)
         manager.setServerJSON(self.json)
         manager.broadcast()

@@ -3,6 +3,7 @@ import json
 
 class Backend():
     def __init__(self):
+        self.readLocalJson()
         self.json = ''
         self.server = ''
         self.managers = ["manager2"]
@@ -12,6 +13,7 @@ class Backend():
         for x in self.managers:
             uri = "PYRONAME:{}@localhost:7777" .format(x)
             self.server = Pyro4.Proxy(uri)
+            self.readLocalJson()
             self.setServerJSON(self.json)
             self.writeLocalJson()
             self.askServerToSync()
@@ -24,6 +26,11 @@ class Backend():
         self.setServerJSON(self.json)
         self.server.readLocalJson()
         print "ask to sync done"
+
+    def readLocalJson(self):
+        with open('log.json') as f:
+            data = json.load(f)
+            self.json = data
 
     def writeLocalJson(self):
         with open('log.json', 'w') as json_file:

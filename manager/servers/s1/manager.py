@@ -10,12 +10,16 @@ class Backend():
 
     def broadcast(self):
         for x in self.managers:
-            uri = "PYRONAME:{}@localhost:7777" .format(x)
+            uri = "PYRONAME:{}@10.151.30.143:7778" .format(x)
             self.server = Pyro4.Proxy(uri)
             self.setServerJSON(self.json)
             self.writeLocalJson()
             self.askServerToSync()
+            self.cobaPrint()
             print "broadcast done"
+            
+    def cobaPrint(self):
+        print "wkwk"
 
     def askServerToSync(self):
         servername = "server1"
@@ -23,7 +27,9 @@ class Backend():
         self.server = Pyro4.Proxy(uri)
         self.setServerJSON(self.json)
         self.server.readLocalJson()
+        
         print "ask to sync done"
+    
 
     def writeLocalJson(self):
         with open('log.json', 'w') as json_file:
@@ -36,8 +42,8 @@ class Backend():
 servername = "manager1"
 def server():
     #JALANIN NAMESERVER LOCAL  pyro4-ns -n localhost -p 7777
-    daemon = Pyro4.Daemon(host="localhost")
-    ns = Pyro4.locateNS("localhost",7777)
+    daemon = Pyro4.Daemon(host="10.151.30.141")
+    ns = Pyro4.locateNS("10.151.30.141",7778)
     x_GreetServer = Pyro4.expose(Backend)
     uri_greetserver = daemon.register(x_GreetServer)
     print("URI greet server : ", uri_greetserver)
