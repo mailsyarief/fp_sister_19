@@ -18,19 +18,19 @@ class Backend(object):
         manager.broadcast()
 
 
-        def replacePlayer(self,username):
-            if(len(self.json['spectators'])  >= 0 ):
-                if username in self.json['players']:
-                    index = self.json['players'].index(username)
-                    self.json['players'][index] = self.json['spectators'][0]
-                    self.json['spectators'].pop(0)
-                    if(self.json['turn'] == username):
-                        self.json['turn'] = self.json['players'][index]                
-                elif username in self.jsonp['spectators']:
-                    self.json['spectators'].remove(username)
-            else:
-                self.json['players'].remove(username)
-            self.syncJson()
+    def replacePlayer(self,username):
+        if(len(self.json['spectators'])  >= 0 ):
+            if username in self.json['players']:
+                index = self.json['players'].index(username)
+                self.json['players'][index] = self.json['spectators'][0]
+                self.json['spectators'].pop(0)
+                if(self.json['turn'] == username):
+                    self.json['turn'] = self.json['players'][index]                
+            elif username in self.jsonp['spectators']:
+                self.json['spectators'].remove(username)
+        else:
+            self.json['players'].remove(username)
+        self.syncJson()
 
         
     def syncJson(self):

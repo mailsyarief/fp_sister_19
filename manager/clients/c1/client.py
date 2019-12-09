@@ -25,17 +25,29 @@ class TestThread(Thread):
     def __init__(self, wxObject):
         Thread.__init__(self)
         self.wxObject = wxObject
-        uri = "PYRONAME:server1@localhost:7777"
-        self.server = Pyro4.Proxy(uri)
+        self.idx = 0
+        self.nameserver = ['server1','server2','server3']
         self.alive = True
+        self.go()
+
+    def go(self):
         self.start()
 
     def run(self):
         while self.alive:
-            jsonData = self.server.getServerJson()
-            print jsonData
-            time.sleep(0.5)
-            wx.PostEvent(self.wxObject, ResultEvent(jsonData))
+            try:
+                uri = "PYRONAME:{}@localhost:7777".format(self.nameserver[self.idx])
+                self.server = Pyro4.Proxy(uri)
+                jsonData = self.server.getServerJson()
+                print "berhasil server "+self.nameserver[self.idx]
+                time.sleep(0.5)
+                wx.PostEvent(self.wxObject, ResultEvent(jsonData))
+            except:
+                self.idx += 1
+                print "gagal server ke "+self.nameserver[self.idx]
+                self.run()
+
+
 
 
 ########################################################################
@@ -51,10 +63,12 @@ class MyForm(wx.Frame):
         self.server = ''
         self.title = ''
         self.username = 'P1'
+        self.idx = 0
         self.pyro_client()
         self.isFinish = False
         self.isSpectator = False
         self.tretTret = TestThread(self)
+
 
         textSizer = wx.BoxSizer(wx.HORIZONTAL)
         mainSizer = wx.BoxSizer(wx.VERTICAL)
@@ -112,7 +126,7 @@ class MyForm(wx.Frame):
                              (self.button3, self.button5, self.button7)]
 
         self.SetSizer(mainSizer)
-
+        self.updateView()
         EVT_RESULT(self, self.getThreadData)
 
     def doExit(self):
@@ -123,6 +137,7 @@ class MyForm(wx.Frame):
         self.doExit()
 
     def onToggle(self, event):
+        self.pyro_client()
         self.checkWin()
         if not self.Toggled:
             button = event.GetEventObject()
@@ -153,10 +168,28 @@ class MyForm(wx.Frame):
                     self.onExit
                 dlg.Destroy()
 
+    def showError(self, message):
+        dlg = wx.MessageDialog(None, message, "Server Error!",
+                               wx.OK | wx.ICON_WARNING)
+        result = dlg.ShowModal()
+        if result == wx.ID_OK:
+            self.onExit
+        dlg.Destroy()
+
+
     def pyro_client(self):
-        uri = "PYRONAME:server1@localhost:7777"
-        self.server = Pyro4.Proxy(uri)
-        self.server.addPlayer(self.username)
+        nameserver = ['server1','server2','server3']
+        try:
+            uri = "PYRONAME:{}@localhost:7777".format(nameserver[self.idx])
+            print "PYRO berhasil server " + nameserver[self.idx]
+            self.server = Pyro4.Proxy(uri)
+            self.server.addPlayer(self.username)
+        except:
+            self.idx += 1
+            print "PYRO gagal server " + nameserver[self.idx]
+            self.pyro_client()
+
+
 
     def setInitial(self):
         TestThread(self)
@@ -231,8 +264,15 @@ class MyForm(wx.Frame):
         self.checkYourTurn(data['turn'])
 
     def checkYourTurn(self, data):
-        if(self.username == data):
-            self.isSpectator == False
+        if(self.isSpectator == True and self.username == data):
+            print self.isSpectator
+            print self.username
+            print "============="
+            self.isSpectator = False
+            self.player = self.server.checkXO(self.username)
+            print self.isSpectator
+            print self.username
+            
         if(self.isSpectator == False):
             if (self.username == data):
                 print "THIS IS YOUR TURN"

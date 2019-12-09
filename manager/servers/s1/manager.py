@@ -30,11 +30,14 @@ class Backend():
             self.json = data
 
     def askServerToSync(self):
-        uri = "PYRONAME:server1@localhost:7777"
-        self.server = Pyro4.Proxy(uri)
-        self.setServerJSON(self.json)
-        self.server.readLocalJson()
-        print "ask to sync done"
+        try:
+            uri = "PYRONAME:server1@localhost:7777"
+            self.server = Pyro4.Proxy(uri)
+            self.setServerJSON(self.json)
+            self.server.readLocalJson()
+            print "ask to sync done"
+        except:
+            print "ask to sync error"
 
     def writeLocalJson(self):
         with open('log.json', 'w') as json_file:

@@ -112,7 +112,7 @@ class MyForm(wx.Frame):
                              (self.button3, self.button5, self.button7)]
 
         self.SetSizer(mainSizer)
-
+        self.updateView()
         EVT_RESULT(self, self.getThreadData)
 
     def doExit(self):
@@ -231,8 +231,15 @@ class MyForm(wx.Frame):
         self.checkYourTurn(data['turn'])
 
     def checkYourTurn(self, data):
-        if(self.username == data):
-            self.isSpectator == False
+        if(self.isSpectator == True and self.username == data):
+            print self.isSpectator
+            print self.username
+            print "============="
+            self.isSpectator = False
+            self.player = self.server.checkXO(self.username)
+            print self.isSpectator
+            print self.username        
+
         if(self.isSpectator == False):
             if (self.username == data):
                 print "THIS IS YOUR TURN"
