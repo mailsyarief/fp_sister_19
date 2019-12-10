@@ -26,7 +26,7 @@ class TestThread(Thread):
         Thread.__init__(self)
         self.wxObject = wxObject
         self.idx = 0
-        self.nameserver = [['server2','10.151.30.145'],['server3','10.151.30.151'],['server1','10.151.30.143']]
+        self.nameserver = [['server2','10.151.253.253'],['server3','10.151.254.137'],['server1','10.151.252.186']]
         # self.nameserver = ['server2', 'server1']
         self.alive = True
         self.go()
@@ -182,7 +182,7 @@ class MyForm(wx.Frame):
 
     def pyro_client(self):
         # nameserver = ['server2','server1']
-        nameserver = [['server2', '10.151.30.145'], ['server3', '10.151.30.151'], ['server1', '10.151.30.143']]
+        nameserver = [['server2', '10.151.253.253'], ['server3', '10.151.254.137'], ['server1', '10.151.252.186']]
         try:
             uri = "PYRONAME:{}@{}:7777".format(nameserver[self.idx][0],nameserver[self.idx][1])
             print "PYRO berhasil server " + nameserver[self.idx][0]

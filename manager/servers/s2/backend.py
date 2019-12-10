@@ -6,9 +6,9 @@ import Pyro4
 class Backend(object):
     def __init__(self):
         self.json = ''
-        self.resetLocalJson()
+        #self.resetLocalJson()
         self.readLocalJson()
-        self.mymanageraddress = "10.151.30.145"
+        self.mymanageraddress = "10.151.253.253"
         pass
 
     def doBroadcast(self):
@@ -19,19 +19,24 @@ class Backend(object):
 
 
     def replacePlayer(self,username):
-        if(len(self.json['spectators'])  >= 0 ):
+        if(len(self.json['spectators'])  > 0 ):
             if username in self.json['players']:
                 index = self.json['players'].index(username)
                 self.json['players'][index] = self.json['spectators'][0]
+                newPlayer = self.json['spectators'][0]
                 self.json['spectators'].pop(0)
                 if(self.json['turn'] == username):
-                    self.json['turn'] = self.json['players'][index]                
+                    self.json['turn'] = newPlayer
             elif username in self.jsonp['spectators']:
                 self.json['spectators'].remove(username)
         else:
             self.json['players'].remove(username)
-        self.syncJson()
 
+        print self.json['players']
+        print self.json['spectators']
+        print self.json['turn']
+
+        self.syncJson()
         
     def syncJson(self):
         self.writeLocalJson()
@@ -61,8 +66,11 @@ class Backend(object):
 
     def addSpectator(self, username):
         if username not in self.json['spectators']:
-            self.json['spectators'].append(username)
-            self.syncJson()
+            if username not in self.json['players']:
+                self.json['spectators'].append(username)
+                self.syncJson()
+
+
 
     def resetLocalJson(self):
         with open('plain.log.json') as f:
