@@ -26,12 +26,12 @@ class TestThread(Thread):
         Thread.__init__(self)
         self.wxObject = wxObject
         self.idx = 0
-        self.nameserver = [['server2','10.151.62.123'],['server3','10.151.62.124'],['server1','10.151.62.122']]
+        self.nameserver = [['server3','10.151.254.137'],['server1','10.151.252.186'],['server2','10.151.253.253']]
+        # self.nameserver = ['server2', 'server1']
         uri = "PYRONAME:server3@localhost:7777"
         self.server = Pyro4.Proxy(uri)
         self.alive = True
         self.go()
-
 
     def go(self):        
         self.start()
@@ -51,7 +51,6 @@ class TestThread(Thread):
                     self.idx = 0
                 print "gagal server ke "+self.nameserver[self.idx][0]
                 self.run()
-
 
 
 
@@ -180,9 +179,17 @@ class MyForm(wx.Frame):
         dlg.Destroy()
 
 
+    def showError(self, message):
+        dlg = wx.MessageDialog(None, message, "Server Error!",
+                               wx.OK | wx.ICON_WARNING)
+        result = dlg.ShowModal()
+        if result == wx.ID_OK:
+            self.onExit
+        dlg.Destroy()
+
     def pyro_client(self):
         # nameserver = ['server2','server1']
-        nameserver = [['server2', '10.151.62.123 '], ['server3', '10.151.62.124 '], ['server1', '10.151.62.122 ']]
+        nameserver = [['server3', '10.151.254.137'], ['server1', '10.151.252.186'], ['server2', '10.151.253.253']]
         try:
             uri = "PYRONAME:{}@{}:7777".format(nameserver[self.idx][0],nameserver[self.idx][1])
             print "PYRO berhasil server " + nameserver[self.idx][0]
@@ -195,7 +202,6 @@ class MyForm(wx.Frame):
                 self.idx = 0
             print "PYRO gagal server " + nameserver[self.idx][0]
             self.pyro_client()
-
 
     def setInitial(self):
         TestThread(self)
