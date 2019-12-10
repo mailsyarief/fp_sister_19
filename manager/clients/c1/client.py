@@ -26,8 +26,8 @@ class TestThread(Thread):
         Thread.__init__(self)
         self.wxObject = wxObject
         self.idx = 0
-        self.nameserver = ['server1','server2']
-        #self.nameserver = ['server1','server2','server3']
+        #self.nameserver = ['server1','server2']
+        self.nameserver = [['server1','10.151.30.143'],['server2','10.151.30.145'],['server3','10.151.30.151']]
         self.alive = True
         self.go()
 
@@ -37,16 +37,18 @@ class TestThread(Thread):
     def run(self):
         while self.alive:
             try:
-                uri = "PYRONAME:{}@localhost:7777".format(self.nameserver[self.idx])
+                uri = "PYRONAME:{}@{}:7777".format(self.nameserver[self.idx][0],self.nameserver[self.idx][1])
                 self.server = Pyro4.Proxy(uri)
                 jsonData = self.server.getServerJson()
-                print "berhasil server "+self.nameserver[self.idx]
+                print "berhasil server "+self.nameserver[self.idx][0]
                 time.sleep(0.5)
                 wx.PostEvent(self.wxObject, ResultEvent(jsonData))
             except Exception as e:
                 print e.message + "DARI THRET"
                 self.idx += 1
-                print "gagal server ke "+self.nameserver[self.idx]
+                if(self.idx > 2):
+                    self.idx = 0
+                print "gagal server ke "+self.nameserver[self.idx][0]
                 self.run()
 
 
@@ -180,18 +182,20 @@ class MyForm(wx.Frame):
 
 
     def pyro_client(self):
-        nameserver = ['server1','server2']
-        #nameserver = ['server1','server2','server3']
+        #nameserver = ['server1','server2']
+        nameserver = [['server1','10.151.30.143'],['server2','10.151.30.145'],['server3','10.151.30.151']]
         try:
-            uri = "PYRONAME:{}@localhost:7777".format(nameserver[self.idx])
-            print "PYRO berhasil server " + nameserver[self.idx]
+            uri = "PYRONAME:{}@{}:7777".format(nameserver[self.idx][0],nameserver[self.idx][1])
+            print "PYRO berhasil server " + nameserver[self.idx][0]
             self.server = Pyro4.Proxy(uri)
             self.server.addPlayer(self.username)
         except Exception as e:
             print e.message + " DARI GUI"
-            # self.idx += 1
-            print "PYRO gagal server " + nameserver[self.idx]
-            # self.pyro_client()
+            self.idx += 1
+            if(self.idx > 2):
+                    self.idx = 0
+            print "PYRO gagal server " + nameserver[self.idx][0]
+            self.pyro_client()
 
 
 

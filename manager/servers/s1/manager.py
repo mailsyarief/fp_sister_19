@@ -6,8 +6,8 @@ class Backend():
         self.readLocalJson()
         self.json = ''
         self.server = ''
-        self.managers = [["manager2","10.151.30.134"]]
-        # self.managers = [["manager2","localhost"],["manager3","localhost"]]
+        #self.managers = [["manager2","10.151.30.134"]]
+        self.managers = [["manager2","10.151.30.145"],["manager3","10.151.30.151"]]
         print self.json
         pass
 
@@ -35,7 +35,7 @@ class Backend():
 
     def askServerToSync(self):
         try:
-            uri = "PYRONAME:server1@localhost:7777"
+            uri = "PYRONAME:server1@10.151.30.143:7777"
             self.server = Pyro4.Proxy(uri)
             self.setServerJSON(self.json)
             self.server.readLocalJson()
@@ -52,7 +52,7 @@ class Backend():
         self.writeLocalJson()
 
 servername = "manager1"
-ip_address = "10.151.30.158"
+ip_address = "10.151.30.143"
 def server():
     #JALANIN NAMESERVER LOCAL  pyro4-ns -n localhost -p 7777
     daemon = Pyro4.Daemon(host=ip_address)
