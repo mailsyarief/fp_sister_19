@@ -6,20 +6,24 @@ class Backend():
         self.readLocalJson()
         self.json = ''
         self.server = ''
-        self.managers = [["manager2","localhost"],["manager3","localhost"]]
+        self.managers = [["manager2","10.151.30.134"]]
+        # self.managers = [["manager2","localhost"],["manager3","localhost"]]
         print self.json
         pass
 
     def broadcast(self):
         for x in self.managers:
-            uri = "PYRONAME:{}@{}:7778" .format(x[0],x[1])
-            self.server = Pyro4.Proxy(uri)
-            self.readLocalJson()
-            self.server.setServerJSON(self.json)
-            self.server.writeLocalJson()
-            self.server.askServerToSync()
-            self.server.cobaPrint()
-            print "broadcast done " + x[0]
+            try:
+                uri = "PYRONAME:{}@{}:7778" .format(x[0],x[1])
+                self.server = Pyro4.Proxy(uri)
+                self.readLocalJson()
+                self.server.setServerJSON(self.json)
+                self.server.writeLocalJson()
+                self.server.askServerToSync()
+                self.server.cobaPrint()
+                print "broadcast done " + x[0]
+            except Exception as e:
+                print e.message
 
     def cobaPrint(self):
         print "WKWKWKWKWKWKKW"
@@ -48,7 +52,7 @@ class Backend():
         self.writeLocalJson()
 
 servername = "manager1"
-ip_address = "localhost"
+ip_address = "10.151.30.158"
 def server():
     #JALANIN NAMESERVER LOCAL  pyro4-ns -n localhost -p 7777
     daemon = Pyro4.Daemon(host=ip_address)

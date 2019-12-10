@@ -26,7 +26,8 @@ class TestThread(Thread):
         Thread.__init__(self)
         self.wxObject = wxObject
         self.idx = 0
-        self.nameserver = ['server1','server2','server3']
+        self.nameserver = ['server1','server2']
+        #self.nameserver = ['server1','server2','server3']
         self.alive = True
         self.go()
 
@@ -42,7 +43,8 @@ class TestThread(Thread):
                 print "berhasil server "+self.nameserver[self.idx]
                 time.sleep(0.5)
                 wx.PostEvent(self.wxObject, ResultEvent(jsonData))
-            except:
+            except Exception as e:
+                print e.message + "DARI THRET"
                 self.idx += 1
                 print "gagal server ke "+self.nameserver[self.idx]
                 self.run()
@@ -178,16 +180,19 @@ class MyForm(wx.Frame):
 
 
     def pyro_client(self):
-        nameserver = ['server1','server2','server3']
+        nameserver = ['server1','server2']
+        #nameserver = ['server1','server2','server3']
         try:
             uri = "PYRONAME:{}@localhost:7777".format(nameserver[self.idx])
             print "PYRO berhasil server " + nameserver[self.idx]
             self.server = Pyro4.Proxy(uri)
             self.server.addPlayer(self.username)
-        except:
-            self.idx += 1
+        except Exception as e:
+            print e.message + " DARI GUI"
+            # self.idx += 1
             print "PYRO gagal server " + nameserver[self.idx]
-            self.pyro_client()
+            # self.pyro_client()
+
 
 
 

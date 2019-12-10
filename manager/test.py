@@ -3,12 +3,12 @@ import Pyro4
 
 
 if __name__ == '__main__':
-    nameserver = ['server2','server3','server1']
+    nameserver = ['manager2']
     for x in nameserver:
-        uri = "PYRONAME:{}@localhost:7777".format(x)
+        uri = "PYRONAME:{}@10.151.30.134:7778".format(x)
         server = Pyro4.Proxy(uri)
-        server.resetLocalJson()
-        print server.getServerJson()
+        # server.resetLocalJson()
+        print server.cobaPrint()
     # server.add_player("P1")
     # server.add_player("P2")
     # server.add_player("P3")
