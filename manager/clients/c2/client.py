@@ -25,17 +25,32 @@ class TestThread(Thread):
     def __init__(self, wxObject):
         Thread.__init__(self)
         self.wxObject = wxObject
-        uri = "PYRONAME:server2@localhost:7777"
-        self.server = Pyro4.Proxy(uri)
+        self.idx = 0
+        self.nameserver = [['server2','10.151.30.145'],['server3','10.151.30.151'],['server1','10.151.30.143']]
+        # self.nameserver = ['server2', 'server1']
         self.alive = True
-        self.start()
+        self.go()
+
+    def go(self):
+        self.start()        
 
     def run(self):
         while self.alive:
-            jsonData = self.server.getServerJson()
-            print jsonData
-            time.sleep(0.5)
-            wx.PostEvent(self.wxObject, ResultEvent(jsonData))
+            try:
+                uri = "PYRONAME:{}@{}:7777".format(self.nameserver[self.idx][0],self.nameserver[self.idx][1])
+                self.server = Pyro4.Proxy(uri)
+                jsonData = self.server.getServerJson()
+                print "berhasil server "+self.nameserver[self.idx][0]
+                time.sleep(0.5)
+                wx.PostEvent(self.wxObject, ResultEvent(jsonData))
+            except:
+                self.idx += 1
+                if (self.idx > 2):
+                    self.idx = 0
+                print "gagal server ke "+self.nameserver[self.idx][0]
+                self.run()
+
+
 
 
 ########################################################################
@@ -51,10 +66,12 @@ class MyForm(wx.Frame):
         self.server = ''
         self.title = ''
         self.username = 'P2'
+        self.idx = 0
         self.pyro_client()
         self.isFinish = False
         self.isSpectator = False
         self.tretTret = TestThread(self)
+
 
         textSizer = wx.BoxSizer(wx.HORIZONTAL)
         mainSizer = wx.BoxSizer(wx.VERTICAL)
@@ -123,6 +140,7 @@ class MyForm(wx.Frame):
         self.doExit()
 
     def onToggle(self, event):
+        self.pyro_client()
         self.checkWin()
         if not self.Toggled:
             button = event.GetEventObject()
@@ -153,10 +171,32 @@ class MyForm(wx.Frame):
                     self.onExit
                 dlg.Destroy()
 
+    def showError(self, message):
+        dlg = wx.MessageDialog(None, message, "Server Error!",
+                               wx.OK | wx.ICON_WARNING)
+        result = dlg.ShowModal()
+        if result == wx.ID_OK:
+            self.onExit
+        dlg.Destroy()
+
+
     def pyro_client(self):
-        uri = "PYRONAME:server2@localhost:7777"
-        self.server = Pyro4.Proxy(uri)
-        self.server.addPlayer(self.username)
+        # nameserver = ['server2','server1']
+        nameserver = [['server2', '10.151.30.145'], ['server3', '10.151.30.151'], ['server1', '10.151.30.143']]
+        try:
+            uri = "PYRONAME:{}@{}:7777".format(nameserver[self.idx][0],nameserver[self.idx][1])
+            print "PYRO berhasil server " + nameserver[self.idx][0]
+            self.server = Pyro4.Proxy(uri)
+            self.server.addPlayer(self.username)
+        except Exception as e:
+            print e.message
+            self.idx += 1
+            if(self.idx > 2):
+                self.idx = 0
+            print "PYRO gagal server " + nameserver[self.idx][0]
+            self.pyro_client()
+
+
 
     def setInitial(self):
         TestThread(self)

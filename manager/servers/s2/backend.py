@@ -8,7 +8,7 @@ class Backend(object):
         self.json = ''
         self.resetLocalJson()
         self.readLocalJson()
-        self.mymanageraddress = "localhost"
+        self.mymanageraddress = "10.151.30.145"
         pass
 
     def doBroadcast(self):

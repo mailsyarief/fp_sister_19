@@ -5,8 +5,8 @@ servername = "server2"
 
 def server():
     #JALANIN NAMESERVER LOCAL  pyro4-ns -n localhost -p 7777
-    daemon = Pyro4.Daemon(host="localhost")
-    ns = Pyro4.locateNS("localhost",7777)
+    daemon = Pyro4.Daemon(host="10.151.30.145")
+    ns = Pyro4.locateNS("10.151.30.145",7777)
     x_GreetServer = Pyro4.expose(Backend)
     uri_greetserver = daemon.register(x_GreetServer)
     print("URI greet server : ", uri_greetserver)
