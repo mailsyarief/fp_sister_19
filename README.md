@@ -4,6 +4,8 @@ gunakan URI untuk referensi name server yang akan digunakan
 
 ----
 
+![Arsitektur app](https://github.com/mailsyarief/blob/master/arsitektur.png)
+
 PLAYER 1
 Untuk menjalankan program sebagai player 1, nyalakan dulu server dan manager pada folder manager/server/s1 (untuk server 1)
 python server.py
