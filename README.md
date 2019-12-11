@@ -1,10 +1,14 @@
+Arsitektur aplikasi
+
+![Arsitektur app](https://github.com/mailsyarief/fp_sister_19/blob/master/arsitektur.png)
+
+Terdapat tiga server dan tiga manager untuk tiga client (player 1, player 2, spectator)
+
 Untuk menjalankan, name server harus dinyalakan dulu pada dua port
 pyro4-ns -n <IP address> -p 7777 dan pyro4-ns -n <IP address> -p 7778
 gunakan URI untuk referensi name server yang akan digunakan
 
 ----
-
-![Arsitektur app](https://github.com/mailsyarief/fp_sister_19/blob/master/arsitektur.png)
 
 PLAYER 1
 Untuk menjalankan program sebagai player 1, nyalakan dulu server dan manager pada folder manager/server/s1 (untuk server 1)
